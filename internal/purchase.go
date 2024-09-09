@@ -40,7 +40,6 @@ func NewPurchaseRepository(db *gorm.DB) IPurchaseRepository {
 	}
 }
 
-// FindAll implements IMemberRepository.
 func (p *purchaseRepository) FindPurchaseWithOutBankTransaction() (*[]PurchaseEntity, error) {
 	purchases := new([]PurchaseEntity)
 	err := p.db.
@@ -48,8 +47,6 @@ func (p *purchaseRepository) FindPurchaseWithOutBankTransaction() (*[]PurchaseEn
 		Select("p.*").
 		Joins("LEFT JOIN bank_transactions bt ON bt.purchase_id = p.id").
 		Where("bt.id IS NULL").
-		Where("EXTRACT(YEAR FROM p.date) = ?", 2024).
-		Where("EXTRACT(MONTH FROM p.date) = ?", 5).
 		Where("p.is_fictive = ?", false).
 		Find(&purchases).Error
 

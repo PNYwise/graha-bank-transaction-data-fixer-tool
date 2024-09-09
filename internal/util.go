@@ -52,3 +52,12 @@ func GetNewCode(prefix string, dateStr string, currentCode string) (string, erro
 
 	return newCode, nil
 }
+
+func Find[T any](slice []T, condition func(T) bool) *T {
+	for i := range slice {
+		if condition(slice[i]) {
+			return &slice[i]
+		}
+	}
+	return nil
+}

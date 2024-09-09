@@ -9,6 +9,7 @@ import (
 type PurchaseReturnEntity struct {
 	ID                   uint           `gorm:"primaryKey;autoIncrement"`
 	Code                 string         `gorm:"unique;not null"`
+	InventoryCode        *string        `gorm:"column:inventory_code"` // Nullable, hence pointer
 	Note                 string         `gorm:"type:text;default:'-'"`
 	Date                 string         `gorm:"not null"`
 	PPNInPercent         float64        `gorm:"not null" json:"ppn_in_percent"`
@@ -45,11 +46,9 @@ func (p *purchaseReturnRepository) FindPurchaseReturnWithOutBankTransaction() (*
 	purchaseReturns := new([]PurchaseReturnEntity)
 	err := p.db.
 		Table("purchase_returns pr").
-		Select("p.*").
+		Select("pr.*").
 		Joins("LEFT JOIN bank_transactions bt ON bt.purchase_return_id = pr.id").
 		Where("bt.id IS NULL").
-		Where("EXTRACT(YEAR FROM pr.date) = ?", 2024).
-		Where("EXTRACT(MONTH FROM pr.date) = ?", 5).
 		Where("pr.is_fictive = ?", false).
 		Find(&purchaseReturns).Error
 
