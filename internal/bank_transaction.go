@@ -73,7 +73,7 @@ func (b *bankTransactionRepository) FindBankTransactionWithDateNotEqualPurchaseR
 	err := b.db.Table("bank_transactions").
 		Joins("PurchaseReturn").
 		Where(`"PurchaseReturn".date <> bank_transactions.date`).
-		Order("bank_transactions.purchase_return_id ASC").
+		Order(`bank_transactions.purchase_return_id ASC`).
 		Find(&bankTransactions).Error
 
 	if err != nil {
@@ -88,6 +88,7 @@ func (b *bankTransactionRepository) FindBankTransactionWithDateNotEqualSaleDate(
 	err := b.db.Table("bank_transactions").
 		Joins("Sale").
 		Where(`"Sale".date <> bank_transactions.date`).
+		Where(`"Sale".is_processed = ?`, true).
 		Order("bank_transactions.sale_id ASC").
 		Find(&bankTransactions).Error
 

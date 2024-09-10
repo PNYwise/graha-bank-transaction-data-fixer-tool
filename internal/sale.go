@@ -43,7 +43,7 @@ func (s *saleRepository) FindSaleWithOutBankTransaction() (*[]SaleEntity, error)
 		Select("s.*").
 		Joins("LEFT JOIN bank_transactions bt ON bt.sale_id = s.id").
 		Where("bt.id IS NULL").
-		Where("s.is_sale_order = ?", false).
+		Where("s.is_processed = ?", true).
 		Find(&sales).Error
 
 	if err != nil {
