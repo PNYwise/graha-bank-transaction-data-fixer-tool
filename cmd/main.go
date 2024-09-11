@@ -62,6 +62,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("%v", err)
 	}
+
 	purchaseReturnBankTransactions, err := bankTransactionRepo.FindBankTransactionWithDateNotEqualPurchaseReturnDate()
 	if err != nil {
 		log.Fatalf("%v", err)
@@ -71,6 +72,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("%v", err)
 	}
+
 	saleReturnBankTransactions, err := bankTransactionRepo.FindBankTransactionWithDateNotEqualSaleReturnDate()
 	if err != nil {
 		log.Fatalf("%v", err)
@@ -114,7 +116,7 @@ func main() {
 		log.Fatalln("some masterBankTransactions not found")
 	}
 
-	// Update purchase bank transaction
+	// // Update purchase bank transaction
 	for _, bankTransaction := range *purchaseBankTransactions {
 		purchase := bankTransaction.Purchase
 		date := purchase.Date
@@ -130,7 +132,6 @@ func main() {
 		bankTransaction.BankNumber = newCode
 		bankTransaction.Date = date
 		bankTransactionRepo.Update(&bankTransaction)
-
 	}
 
 	// Update purchase return bank transaction
@@ -149,7 +150,6 @@ func main() {
 		bankTransaction.BankNumber = newCode
 		bankTransaction.Date = date
 		bankTransactionRepo.Update(&bankTransaction)
-
 	}
 
 	// Update sale bank transaction
@@ -187,10 +187,9 @@ func main() {
 		bankTransaction.BankNumber = newCode
 		bankTransaction.Date = date
 		bankTransactionRepo.Update(&bankTransaction)
-
 	}
 
-	// Create purchase bank transaction
+	// // Create purchase bank transaction
 	for _, purchase := range *purchases {
 		date := purchase.Date
 		lastCode, err := bankTransactionRepo.FindLastCode(date, purchasePrefix)
@@ -282,7 +281,7 @@ func main() {
 		bankTransactionRepo.Create(&bankTransaction)
 	}
 
-	// Create sale return bank transaction
+	// // Create sale return bank transaction
 	for _, saleReturn := range *saleReturns {
 		date := saleReturn.Date
 		lastCode, err := bankTransactionRepo.FindLastCode(date, saleReturnPrefix)
@@ -302,10 +301,10 @@ func main() {
 			Note:       "-",
 			Amount:     float64(saleReturn.Total),
 			IsMain:     true,
-			SaleID:     &saleReturnId,
+			SaleReturnID:     &saleReturnId,
 			BankTransactionItems: []internal.BankTransactionItemEntity{
-				{Note: saleReturn.Code, SubAmount: float64(saleReturn.TotalNotIncludingPpn), MasterBankTransactionID: PPNOUTRET.ID},
-				{Note: saleReturn.Code, SubAmount: float64(saleReturn.PpnInValue), MasterBankTransactionID: SALESRET.ID},
+				{Note: saleReturn.Code, SubAmount: float64(saleReturn.TotalNotIncludingPpn), MasterBankTransactionID: SALESRET.ID},
+				{Note: saleReturn.Code, SubAmount: float64(saleReturn.PpnInValue), MasterBankTransactionID: PPNOUTRET.ID},
 			},
 		}
 		bankTransactionRepo.Create(&bankTransaction)
